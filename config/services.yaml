@@ -1,75 +1,18 @@
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
-
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
-parameters:
-
 services:
-    # default configuration for services in *this* file
-    _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+  App\Domain\Repository\:
+    resource: '../src/Domain/Repository'
+    autowire: true
+    autoconfigure: true
+  App\DataFixtures\:
+    resource: '../src/DataFixtures'
+    autowire: true
+    autoconfigure: true
+    tags: ['doctrine.fixture.orm']
+  App\Controller\:
+    resource: '../src/Controller'
+    tags: ['controller.service_arguments']
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
-    App\:
-        resource: '../src/'
-        exclude:
-            - '../src/DependencyInjection/'
-            - '../src/Entity/'
-            - '../src/Kernel.php'
-
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
-
-    strong_formatter:
-        class: App\Domain\Service\FormatService
-        factory: ['App\Domain\Service\FormatServiceFactory', 'strongFormatService']
-        tags: ['app.formatter_service']
-
-    cite_formatter:
-        class: App\Domain\Service\FormatService
-        factory: ['@App\Domain\Service\FormatServiceFactory', 'citeFormatService']
-        tags: ['app.formatter_service']
-
-    main_header_formatter:
-        class: App\Domain\Service\FormatService
-        factory: ['@App\Domain\Service\FormatServiceFactory', 'headerFormatService']
-        arguments: [1]
-
-    hello_greeter:
-        class: App\Domain\Service\GreeterService
-        arguments:
-            $greet: 'Hello'
-        tags:
-            - { name: 'app.greeter_service', priority: 3 }
-
-    greetings_greeter:
-        class: App\Domain\Service\GreeterService
-        arguments:
-            $greet: 'Greetings'
-        tags:
-            - { name: 'app.greeter_service', priority: 2 }
-
-    hi_greeter:
-        class: App\Domain\Service\GreeterService
-        arguments:
-            $greet: 'Hi'
-        tags:
-            - { name: 'app.greeter_service', priority: 1 }
-
-    list_formatter:
-        class: App\Domain\Service\FormatService
-        calls:
-            - [setTag, ['ol']]
-
-    list_item_formatter:
-        class: App\Domain\Service\FormatService
-        calls:
-            - [setTag, ['li']]
-        tags: ['app.formatter_service']
-
-    App\Controller\WorldController:
-        arguments:
-            $formatService: '@list_formatter'
+  App\Controller\DemoController:
+    autowire: true
+    autoconfigure: true
+    public: true

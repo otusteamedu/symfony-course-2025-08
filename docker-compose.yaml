@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: ./docker/nginx/Nginx.Dockerfile
+    ports:
+      - "8096:80"
+    networks:
+      - internal
+    volumes:
+      - ./:/var/www/app
+
+  fpm:
+    build:
+      context: .
+      dockerfile: ./docker/php/Fpm.Dockerfile
+    volumes:
+      - ./:/var/www/app
+    networks:
+      - internal
+
+  database:
+    image: mysql:5.7
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - database_data:/var/lib/mysql
+      - ./docker/mysql/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql:ro
+    ports:
+      - "3306:3306"
+    networks:
+      - internal
+
+networks:
+  internal:
+
+volumes:
+  database_data:
