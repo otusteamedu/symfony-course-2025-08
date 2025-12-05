@@ -236,6 +236,14 @@ class User implements EntityInterface, HasMetaTimestampsInterface, SoftDeletable
     }
 
     /**
+     * @return Subscription[]
+     */
+    public function getSubscriptionAuthors(): array
+    {
+        return $this->subscriptionAuthors->toArray();
+    }
+
+    /**
      * @return string[]
      */
     public function getRoles(): array
