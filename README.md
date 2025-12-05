@@ -1,6 +1,13 @@
-# Репозиторий с примерами кода для курса [Symfony Framework](https://otus.ru/lessons/symfony/)
+Commands:
 
-Группа: Symfony-2025-02
+Валидация схемы БД:
+php bin/console doctrine:schema:validate
 
-Авторы:
- - [Михаил Каморин](mailto:m.v.kamorin@gmail.com)
+Создание миграции:
+php bin/console make:migration
+
+Накатка миграции:
+php bin/console doctrine:migrations:migrate
+
+Накатка изменений миграции:
+php bin/console doctrine:migrations:diff

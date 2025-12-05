@@ -1,18 +1,14 @@
-services:
-  App\Domain\Repository\:
-    resource: '../src/Domain/Repository'
-    autowire: true
-    autoconfigure: true
-  App\DataFixtures\:
-    resource: '../src/DataFixtures'
-    autowire: true
-    autoconfigure: true
-    tags: ['doctrine.fixture.orm']
-  App\Controller\:
-    resource: '../src/Controller'
-    tags: ['controller.service_arguments']
+parameters:
+    locale: 'en'
 
-  App\Controller\DemoController:
-    autowire: true
-    autoconfigure: true
-    public: true
+services:
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    _defaults:
+        autowire: true
+        autoconfigure: true

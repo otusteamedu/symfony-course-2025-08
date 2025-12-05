@@ -2,7 +2,6 @@
 
 namespace App\Domain\Repository;
 
-
 use App\Domain\Entity\Store;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,20 +26,21 @@ class StoreRepository extends ServiceEntityRepository
     }
 
     /**
-     * Найти склад по коду
+     *
+     * @param string $code
+     * @param int $minProducts
+     * @return Store[]
      */
-    public function findByCode(string $code): ?Store
-    {
-        return $this->findOneBy(['code' => $code]);
-    }
-
-    /**
-     * Получить все склады отсортированные по коду
-     */
-    public function findAllOrdered(): array
+    public function findByCodeWithMinProducts(string $code, int $minProducts): array
     {
         return $this->createQueryBuilder('s')
-            ->orderBy('s.code', 'ASC')
+            ->leftJoin('s.products', 'p')
+            ->addSelect('COUNT(p.id) AS HIDDEN productCount')
+            ->andWhere('s.code = :code')
+            ->setParameter('code', $code)
+            ->groupBy('s.id')
+            ->having('COUNT(p.id) >= :minProducts')
+            ->setParameter('minProducts', $minProducts)
             ->getQuery()
             ->getResult();
     }

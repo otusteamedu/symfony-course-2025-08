@@ -13,7 +13,6 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ProductRepository extends ServiceEntityRepository
 {
-
     public function __construct(protected EntityManagerInterface $entityManager, ManagerRegistry $registry)
     {
         parent::__construct($registry, Product::class);
@@ -27,23 +26,17 @@ class ProductRepository extends ServiceEntityRepository
         }
     }
 
-    /**
-     * Найти продукт по коду
+     /**
+     *
+     * @param int $storeId
+     * @return Product[]
      */
-    public function findByCode(string $code): ?Product
-    {
-        return $this->findOneBy(['code' => $code]);
-    }
-
-    /**
-     * Получить все продукты конкретного магазина
-     */
-    public function findByStore(Store $store): array
+    public function findByStoreId(int $storeId): array
     {
         return $this->createQueryBuilder('p')
-            ->andWhere('p.store = :store')
-            ->setParameter('store', $store)
-            ->orderBy('p.code', 'ASC')
+            ->innerJoin('p.store', 's')
+            ->andWhere('s.id = :storeId')
+            ->setParameter('storeId', $storeId)
             ->getQuery()
             ->getResult();
     }

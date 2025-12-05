@@ -62,15 +62,6 @@
             "bin/phpunit"
         ]
     },
-    "symfony/amazon-sns-notifier": {
-        "version": "7.2",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "5.4",
-            "ref": "ad3df83c54f93edca7a1368da172fe9e513ace6a"
-        }
-    },
     "symfony/apache-pack": {
         "version": "1.0",
         "recipe": {
@@ -181,18 +172,6 @@
             "config/packages/monolog.yaml"
         ]
     },
-    "symfony/notifier": {
-        "version": "7.2",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "5.0",
-            "ref": "178877daf79d2dbd62129dd03612cb1a2cb407cc"
-        },
-        "files": [
-            "config/packages/notifier.yaml"
-        ]
-    },
     "symfony/routing": {
         "version": "7.2",
         "recipe": {
@@ -219,19 +198,6 @@
             "config/routes/security.yaml"
         ]
     },
-    "symfony/translation": {
-        "version": "7.2",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "6.3",
-            "ref": "620a1b84865ceb2ba304c8f8bf2a185fbf32a843"
-        },
-        "files": [
-            "config/packages/translation.yaml",
-            "translations/.gitignore"
-        ]
-    },
     "symfony/twig-bundle": {
         "version": "7.2",
         "recipe": {
@@ -243,21 +209,6 @@
         "files": [
             "config/packages/twig.yaml",
             "templates/base.html.twig"
-        ]
-    },
-    "symfony/ux-translator": {
-        "version": "2.31",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "2.9",
-            "ref": "bc396565cc4cab95692dd6df810553dc22e352e1"
-        },
-        "files": [
-            "assets/translator.js",
-            "config/packages/ux_translator.yaml",
-            "var/translations/configuration.js",
-            "var/translations/index.js"
         ]
     },
     "symfony/validator": {

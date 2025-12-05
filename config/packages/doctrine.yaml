@@ -2,8 +2,8 @@ doctrine:
     dbal:
         default_table_options:
             charset: utf8mb4
-            collation: utf8mb4_general_ci
-            collate: utf8mb4_general_ci
+            collation: utf8mb4_0900_ai_ci
+            collate: utf8mb4_0900_ai_ci
         url: '%env(resolve:DATABASE_URL)%'
         options:
             search_path: 'public'
@@ -27,12 +27,14 @@ doctrine:
             Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
         auto_mapping: true
         mappings:
-          AppDomain:
-            is_bundle: false
-            type: attribute
-            dir: '%kernel.project_dir%/src/Domain/Entity'
-            prefix: 'App\Domain\Entity'
-            alias: AppDomain
+            AppDomain:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Domain/Entity'
+                prefix: 'App\Domain\Entity'
+                alias: AppDomain
+        controller_resolver:
+            auto_mapping: false
 
 #when@test:
 #    doctrine:
