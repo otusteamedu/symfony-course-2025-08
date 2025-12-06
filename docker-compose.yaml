@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: ./docker/nginx/Nginx.Dockerfile
     ports:
-      - "8096:80"
+      - "8097:80"
     networks:
       - internal
     volumes:
@@ -35,7 +35,7 @@ services:
       - database_data:/var/lib/mysql
       - ./docker/mysql/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql:ro
     ports:
-      - "3306:3306"
+      - "3307:3306"
     networks:
       - internal
 

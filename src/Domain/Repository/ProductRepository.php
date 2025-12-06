@@ -47,4 +47,12 @@ class ProductRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function remove(Product $product, bool $flush = true): void
+    {
+        $this->entityManager->remove($product);
+        if ($flush) {
+            $this->entityManager->flush();
+        }
+    }
 }

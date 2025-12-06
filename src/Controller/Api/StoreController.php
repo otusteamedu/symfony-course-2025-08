@@ -3,63 +3,77 @@
 namespace App\Controller\Api;
 
 use App\Domain\Entity\Store;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Domain\Repository\StoreRepository;
+use App\Service\StoreService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Response;
 
 #[Route('/api/stores')]
 class StoreController extends AbstractController
 {
     public function __construct(
-        private readonly StoreRepository $storeRepository,
-        private readonly EntityManagerInterface $em
+        private readonly StoreService $storeService
     ) {}
 
     #[Route('', methods: ['GET'])]
     public function index(): JsonResponse
     {
-        $stores = $this->storeRepository->findAllOrdered();
-        return $this->json($stores);
+        try {
+            $stores = $this->storeService->getAll();
+            return $this->json($stores);
+        } catch (\Throwable $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     #[Route('/{id}', methods: ['GET'])]
     public function show(Store $store): JsonResponse
     {
-        return $this->json($store);
+        try {
+            return $this->json($this->storeService->getStore($store));
+        } catch (\Throwable $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     #[Route('', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-        $store = new Store();
-        $store->setCode($data['code']);
-
-        $this->em->persist($store);
-        $this->em->flush();
-
-        return $this->json($store, 201);
+        try {
+            $data = json_decode($request->getContent(), true);
+            $store = $this->storeService->create($data);
+            return $this->json($store, Response::HTTP_CREATED);
+        } catch (\InvalidArgumentException $e) {
+            return $this->json(['error' => $e->getMessage()], $e->getCode() ?: Response::HTTP_BAD_REQUEST);
+        } catch (\Throwable $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     #[Route('/{id}', methods: ['PUT'])]
     public function update(Store $store, Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-        $store->setCode($data['code']);
-        $this->em->flush();
-
-        return $this->json($store);
+        try {
+            $data = json_decode($request->getContent(), true);
+            $store = $this->storeService->update($store, $data);
+            return $this->json($store);
+        } catch (\InvalidArgumentException $e) {
+            return $this->json(['error' => $e->getMessage()], $e->getCode() ?: Response::HTTP_BAD_REQUEST);
+        } catch (\Throwable $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     #[Route('/{id}', methods: ['DELETE'])]
     public function delete(Store $store): JsonResponse
     {
-        $this->em->remove($store);
-        $this->em->flush();
-
-        return $this->json(null, 204);
+        try {
+            $this->storeService->delete($store);
+            return $this->json(null, Response::HTTP_NO_CONTENT);
+        } catch (\Throwable $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }

@@ -44,4 +44,12 @@ class StoreRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function remove(Store $store, bool $flush = true): void
+    {
+        $this->entityManager->remove($store);
+        if ($flush) {
+            $this->entityManager->flush();
+        }
+    }
 }

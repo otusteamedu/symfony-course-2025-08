@@ -8,11 +8,12 @@ services:
     autowire: true
     autoconfigure: true
     tags: ['doctrine.fixture.orm']
+  App\Service\:
+    resource: '../src/Service'
+    autowire: true
+    autoconfigure: true
   App\Controller\:
     resource: '../src/Controller'
     tags: ['controller.service_arguments']
-
-  App\Controller\DemoController:
     autowire: true
     autoconfigure: true
-    public: true

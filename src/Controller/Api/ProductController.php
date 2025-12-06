@@ -3,83 +3,78 @@
 namespace App\Controller\Api;
 
 use App\Domain\Entity\Product;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Domain\Repository\ProductRepository;
-use App\Domain\Repository\StoreRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Response;
+use App\Service\ProductService;
 
 #[Route('/api/products')]
 class ProductController extends AbstractController
 {
     public function __construct(
-        private readonly ProductRepository $productRepository,
-        private readonly StoreRepository   $storeRepository,
-        private readonly EntityManagerInterface $em
+        private readonly ProductService $productService
     ) {}
 
     #[Route('', methods: ['GET'])]
     public function index(): JsonResponse
     {
-        $products = $this->productRepository->findAll();
-        return $this->json($products);
+        try {
+             $products = $this->productService->getAll();
+            return $this->json($products);
+        } catch (\Throwable $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     #[Route('/{id}', methods: ['GET'])]
     public function show(Product $product): JsonResponse
     {
-        return $this->json($product);
+        try {
+            return $this->json($product);
+        } catch (\Throwable $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     #[Route('', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-        $store = $this->storeRepository->find($data['store_id']);
-
-        if (!$store) {
-            return $this->json(['error' => 'Store not found'], 404);
+        try {
+            $data = json_decode($request->getContent(), true);
+            $store = $this->productService->create($data);
+            return $this->json($store, Response::HTTP_CREATED);
+        } catch (\InvalidArgumentException $e) {
+            return $this->json(['error' => $e->getMessage()], $e->getCode() ?: Response::HTTP_BAD_REQUEST);
+        } catch (\Throwable $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        $product = new Product();
-        $product->setCode($data['code']);
-        $product->setStore($store);
-
-        $this->em->persist($product);
-        $this->em->flush();
-
-        return $this->json($product, 201);
     }
 
     #[Route('/{id}', methods: ['PUT'])]
     public function update(Product $product, Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-
-        if (isset($data['code'])) {
-            $product->setCode($data['code']);
+        try {
+            $data = json_decode($request->getContent(), true);
+            $store = $this->productService->update($product, $data);
+            return $this->json($store);
+        } catch (\InvalidArgumentException $e) {
+            return $this->json(['error' => $e->getMessage()], $e->getCode() ?: Response::HTTP_BAD_REQUEST);
+        } catch (\Throwable $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        if (isset($data['store_id'])) {
-            $store = $this->storeRepository->find($data['store_id']);
-            if ($store) {
-                $product->setStore($store);
-            }
-        }
-
-        $this->em->flush();
-
-        return $this->json($product);
     }
 
     #[Route('/{id}', methods: ['DELETE'])]
     public function delete(Product $product): JsonResponse
     {
-        $this->em->remove($product);
-        $this->em->flush();
-
-        return $this->json(null, 204);
+        try {
+            $this->productService->delete($product);
+            return $this->json(null, Response::HTTP_NO_CONTENT);
+        } catch (\Throwable $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }
