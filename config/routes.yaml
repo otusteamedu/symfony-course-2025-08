@@ -4,6 +4,12 @@ controllers:
         namespace: App\Controller
     type: attribute
 
+server_api:
+    resource:
+        path: ../feedBundle/src/Controller/
+        namespace: FeedBundle\Controller
+    type: attribute
+
 app.swagger_ui:
     path: /api/doc
     methods: GET
