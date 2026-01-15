@@ -24,6 +24,7 @@ yarn-error.log
 ###> phpunit/phpunit ###
 /phpunit.xml
 /.phpunit.cache/
+sharedKernel/tests/.phpunit.result.cache
 ###< phpunit/phpunit ###
 
 ###> deptrac/deptrac ###
